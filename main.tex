@@ -679,10 +679,41 @@ In general, during even phases, odd-reanked partners exchange with
  ranks 0 and  \texttt{comm\_sz-1}.
 
 \subsubsection*{Safety}
-The MPI standard allows $MPI_Send$ to behave in two ways - blocking
+The MPI standard allows \texttt{MPI\_Send }to behave in two ways - blocking
 and buffering. Many systems set a threshold at which the system
 switches from buffering to blocking; small messages are buffered
 while larger ones are blocking. So, we can easily have hangs
-and deadlocks if we are not careful. In conclusion, \texttt{MPI\_Send} 
+and deadlocks if we are not careful. In conclusion, \texttt{MPI\_Send} is \emph{unsafe} 
+because it relies on MPI provided buffering  Thankfully, MPI
+provides safer alternatives in the form of synchronous send - \texttt{MPI\_Ssend}.
 
+%%%% TODO: the whole commentary on MPI_Ssend, MPI_Sendrecv etc, and merge
+
+\begin{minted}[frame=lines, linenos, fontsize=\large]
+{c}
+void Merge_low(
+		int my_keys[],  /* in/out */
+		int recv_keys[],  /* in */
+		int temp_keys[],  /* scratch */
+		int local_n  /* = n/p, in */) {
+	int m_i, r_i, t_i;
+	m_i = r_i = t_i = 0;
+	while (t_i < local_n) {
+		if (my_keys[m_i] <= recv_keys[r_i]) {
+			temp_keys[t_i] = my_keys[m_i];
+			t_i++; m_i++;
+		} else {
+			temp_keys[t_i] = recv_keys[r_i];
+			t_i++; r_i++;
+		}
+	}
+
+	for (m_i = 0; m_i < local_n; m_i++) {
+		my_keys[m_i] = temp_keys[m_i];
+	}
+}
+\end{minted}
 \end{document}
+
+\subsection*{Attempts at Exercises}
+
