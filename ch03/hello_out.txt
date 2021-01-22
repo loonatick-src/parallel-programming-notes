@@ -1,0 +1,6 @@
+Greetings from process 0 of 6!
+Greetings fomr process 1 of 6!
+Greetings fomr process 2 of 6!
+Greetings fomr process 3 of 6!
+Greetings fomr process 4 of 6!
+Greetings fomr process 5 of 6!
