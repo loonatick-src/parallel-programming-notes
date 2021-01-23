@@ -5,6 +5,7 @@
 \usepackage{textcomp}
 \usepackage[english]{babel}
 \usepackage{amsmath, amssymb}
+\usepackage{caption}
 \usepackage{minted}
 
 
@@ -20,6 +21,8 @@
 }
 \newcommand{\hcut}{\hbar}
 
+\newenvironment{code}{\captionsetup{type=listing}}{}
+
 \DeclareMathSymbol{\C}{\mathalpha}{AMSb}{"43}
 \DeclareMathSymbol{\R}{\mathalpha}{AMSb}{"52}
 
@@ -30,4 +33,49 @@
 
 \begin{document}
 \maketitle
+\section*{1}
+\subsection*{Greeting}
+Changing \texttt{strlen(greeting) + 1} to \texttt{strlen(greeting)}
+would exlude the terminating null character from the greeting string.
+But, as it turns out, when passing the non-null-terminated string
+to \texttt{MPI\_Send}, MPI checks for the terminating null character
+and adds one if one is not already there. So, everything works as 
+intended.
+
+If \texttt{MAX\_STRING} is passed instead, then the message might include
+bytes beyond the terminating null character. But, string functions like
+\texttt{printf} et cetera should work just fine because that includes
+the terminating null character.
+
+\texttt{mpicc} also uses the same options as \texttt{gcc}, so
+conditional preprocessing can be done to produce three variants of
+the code by using appropriate \texttt{gcc} options.
+
+\begin{code}
+\inputminted[samepage=false, breaklines, linenos, firstline=1]{c}{codes/ex3_1.c}
+\label{normal}
+\caption{Greetings program with preprocessor directives}
+\end{code}
+
+Use \texttt{mpicc -D NONULL -o nonull ex3\_1.c} to get the code in
+listing \ref{nonull}.
+
+\begin{code}
+\inputminted[samepage=false, breaklines, breakanywhere, linenos=true, firstline=8709]{c}{codes/ex3_1_nonull.c}
+\label{nonull}
+\caption{Without the terminating null character}
+\end{code}
+
+
+
+Similarly, using \texttt{mpicc -D MAX\_STRING -o maxstring ex3\_1.c}
+gives.
+
+\begin{code}
+\inputminted[breaklines, linenos, firstline=8709]{c}{codes/ex3_1_fullbuffer.c}
+\end{code}
+
+\subsection*{Trapezoid Rule}
+
+
 \end{document}
