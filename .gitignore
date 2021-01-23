@@ -5,3 +5,4 @@
 *.synctex.gz
 *minted-main/
 *.swp
+*.out
